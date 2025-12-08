@@ -1,8 +1,10 @@
-HDF5 Version 1.3 Morphology Description
+HDF5 Version 1.4 Morphology Description
 =======================================
 
 Changelog
 ---------
+- 1.4 Added specification for Multiple Spines.
+
 - 1.3 Added specification for Dendritic Spine.
 
 - 1.2 Added specification for Mitochondria and Endoplasmic Reticulum
@@ -179,14 +181,14 @@ The datasets in the organelles/postsynaptic_density group are:
 
 The attributes in the `/metadata` group are:
 
-  - `cell_family_enum`: An H5 enum that can take the values NEURON, GLIA or
-    SPINE. Inside each family there can be multiple types, this classification
-    is out of the scope of this file.
+  - `cell_family_enum`: An H5 enum that can take the values NEURON, GLIA, SPINE
+     or MULTIPLE_SPINES. Inside each family there can be multiple types, this
+     classification is out of the scope of this file.
 
   - `cell_family`: An H5 attribute of type `cell_family_enum`: States the
      family that the morphology belongs to. Prior version 1.1, the cell family
-     is assumed to be NEURON. As of version 1.3, the cell family can be
-     `SPINE`.
+     is assumed to be NEURON. As of version 1.3, the cell family can be `SPINE`.
+     As of version 1.4, the cell family can be `MULTIPLE_SPINES`.
 
   - `creator`: The software used to create the morphology.
 
@@ -262,6 +264,13 @@ begins at the dendritic shaft and not the center of the dendrite.
 Unifurcations are allowed so that for a long morphological process that does
 not branch different sections can still be annotated as head and neck.
 PSD: :term:`postsynaptic density` are identified on points.
+
+Multiple spines: a set of multiple spines can be represented as a single
+morphology, following the same specification. The only difference is that only
+the spines are represented. In this case, there is no soma nor neurites. The
+spines' coordinates (`points` structure) can be local (centered at (0,0,0)) or
+global (with respect to its corresponding morphology). Therefore, the points
+belonging to different spines do not need to be connected.
 
 Example
 -------
@@ -443,6 +452,44 @@ diagram):
    +------+-----------+
    |  1   |   .9      |
    +------+-----------+
+
+
+Multiple spines example
+-----------------------
+
+For the example, we will be using a set of two spines, with two points each.
+
+.. image:: _static/ExMultipleSpines.svg
+    :alt: Example Multiple Spines
+
+`points` structure (note the implicit `i` index, the colours refer to the above
+diagram):
+
+   +------+-------+-------+-------+-------+--------------+
+   |   i  |   X   |   Y   |   Z   |   D   |              |
+   +======+=======+=======+=======+=======+==============+
+   |   0  |   2.  |   2.  |   2.  |  0.1  |              |
+   +------+-------+-------+-------+-------+   Green      |
+   |   1  |   2.  |   2.  |  2.7  |  0.3  |              |
+   +------+-------+-------+-------+-------+--------------+
+   |   2  |   5.  |   5.  |   5.  |  0.2  |              |
+   +------+-------+-------+-------+-------+   Blue       |
+   |   3  |   5.  |   6.  |   5.  |  0.5  |              |
+   +------+-------+-------+-------+-------+--------------+
+
+
+
+`structure` Dataset, where `SO` is `Segment Offset`, `PID` is `Parent ID` and
+`TYP` is `Type` (note the implicit `i` index):
+
+   === === === === ==========
+    i   SO TYP PID Colour
+   === === === === ==========
+    0   2   2  -1  Green
+    1   5   2  -1  Blue
+   === === === === ==========
+
+
 
 
 Consumers
