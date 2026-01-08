@@ -7,8 +7,7 @@ Changelog
 
 - 1.3 Added specification for Dendritic Spine.
 
-- 1.2 Added specification for Mitochondria and Endoplasmic Reticulum
-      morphology.
+- 1.2 Added specification for Mitochondria and Endoplasmic Reticulum morphology.
 
 - 1.1 Added versioning to the file. Modifications to support glia cells
       (cell_family attribute and perimeter dataset).
@@ -30,14 +29,13 @@ File Format
 -----------
 
 The file contains a root `/`, with three `HDF5 Datasets` that describe the
-Neuron or Glia cell morphology and dendrictic spine morphology. The
-`/organelles` group has 2 sub-groups that contain information about cell
-organelles and one sub-group that contains dendritic spine organelles. There is
-a `mitochondria` group that contains three `HDF5 Datasets` describing the
-mitochondria morphology present in the cell. Similarly, there is a
-`endoplasmic_reticulum` group that describes ER morphology. There is a
-postsynaptic_density/points dataset that describes dendritic spine PSD. There
-are also attributes in the `/metadata` group.
+Neuron or Glia cell morphology and dendrictic spine morphology. The `/organelles` group has 2 sub-groups
+that contain information about cell organelles and one sub-group that contains dendritic spine organelles.
+There is a `mitochondria` group that contains three `HDF5 Datasets` describing the mitochondria morphology
+present in the cell. Similarly, there is a `endoplasmic_reticulum` group that
+describes ER morphology. There is a postsynaptic_density/points dataset that describes dendritic spine PSD.
+There are also attributes in the `/metadata`
+group.
 
 Note : The `organelles` group and the groups and datasets in it are optional
 and are not a must for representing cell morphology. These fields may be used
@@ -78,31 +76,27 @@ The datasets in the root `/` are:
      - `type`: The type of process for this section. This integer is
        interpreted differently depending on the cell type.
 
-       For neurons the values are: 1: `soma`, 2: `axon`, 3: `basal dendrite`,
-       4: `apical dendrite`.
+       For neurons the values are: 1: `soma`, 2: `axon`, 3: `basal dendrite`, 4: `apical dendrite`.
 
-       For glia cells the values are: 1: `soma`, 2:
-       `glia perivascular process`, 3 `glia process`.
+       For glia cells the values are: 1: `soma`, 2: `glia perivascular process`, 3 `glia process`.
 
        For dendritic spine the values are: 2: `neck`, 3: `head`.
 
-       Note: If there is a soma, it should be given as the first section (the
-       soma must contain only one section).
+       Note: If there is a soma, it should be given as the first section (the soma must contain only one section).
 
      - `parent index`: The implicit index into the `structure` of the parent.
        For the soma `Type`, it is set to -1, otherwise it must point to a
        **previous** :term:`section` (ie: no forward references)
 
-  - `perimeters` (optional for neurons and dentritic spines, mandatory for
-     glial cells): Glial cells are not as tubular as neurons, therefore a
-     truncated cone representation is not sufficient to capture both the
-     lateral surface area and the volume of the process segment. So
-     :term:`perimeter` encode its lateral surface area. A 1 column data set
-     composed of floating point numbers representing the :term:`perimeter` of
-     the :term:`cross section` at each point. There is a one to one
-     correspondence between this dataset and the `points` dataset. The unit is
-     micrometers. The :term:`perimeter` for the rows corresponding to `soma`
-     points must be set to 0.
+  - `perimeters` (optional for neurons and dentritic spines, mandatory for glial cells):
+     Glial cells are not as tubular as neurons, therefore a truncated cone representation is not sufficient to capture
+     both the lateral surface area and the volume of the process segent.
+     So :term:`perimeter` encode its lateral surface area.
+     A 1 column data set composed of floating point numbers representing the
+     :term:`perimeter` of the :term:`cross section` at each point. There is
+     a one to one correspondence between this dataset and the `points` dataset.
+     The unit is micrometers.
+     The :term:`perimeter` for the rows corresponding to `soma` points must be set to 0.
 
 There are 3 groups in `/organelles`:
 
@@ -149,9 +143,9 @@ The datasets in `organelles/mitochondria` group are:
        sections, are duplicated.
 
   - `structure`:
-     This dataset describes the actual structure of the mitochondria by
-     grouping the points described in the `mitochondria/points` dataset into
-     mitochondrial sections.
+     This dataset describes the actual structure of the mitochondria by grouping
+     the points described in the `mitochondria/points` dataset into mitochondrial
+     sections.
 
      - `start offset`: The implicit index in the `mitochondria/points` dataset.
        It is similar to the `start offset` in the `/structure` dataset, as the
@@ -169,14 +163,11 @@ The datasets in `organelles/mitochondria` group are:
 
 The datasets in the organelles/postsynaptic_density group are:
 
-  - `section_index` (int): This column represents the index of the section that
-    the PSD lies in.
+  - `section_index` (int): This column represents the index of the section that the PSD lies in.
 
-  - `segment_index` (int): This column represents the index of the segment
-    within the section that PSD lies in.
+  - `segment_index` (int): This column represents the index of the segment within the section that PSD lies in.
 
-  - `offset` (float): This column represents the fraction of the segment where
-    the PSD is located.
+  - `offset` (float): This column represents the fraction of the segment where the PSD is located.
 
 
 The attributes in the `/metadata` group are:
@@ -238,8 +229,8 @@ The diameter at an :term:`end point<end-point>` of a segment represents the
    different structure dataset may represent the same neuron. For instance,
    swapping the order of how the neurites are included in the file, give two
    equivalent representations of the same neuron with different indices. For
-   that reasons no assumptions about the order of enumeration of sections
-   should be made.
+   that reasons no assumptions about the order of enumeration of sections should
+   be made.
 
 Endoplasmic Reticulum: The ER extends throughout the cell body as numerous
 filaments. It is generally thought of as a single connected compartment. Thus,
@@ -247,22 +238,22 @@ it's morphological information includes the surface area, volume and number of
 filaments, as a property of the `section` of the cell body it lies in.
 
 Mitochondria: The mitochondria are present as tube-like structures inside the
-Neuron cell body, and may extend through different sections of the neuron
-(Soma, axon, dendrites). There may also be **multiple** mitochondria present
-within a single neuron. Thus, they are represented as a tree-like stucture,
-with a series of points (which differ in radii), organized into sections. The
-position of the points are represented as a function of the :term:`section` of
-the neuron they lie in. In case of branching mitochondria, multiple sections
-would be required to represent them while a single section would be sufficient
-to represent a mitochondria that does not branch.
+Neuron cell body, and may extend through different sections of the neuron (Soma,
+axon, dendrites). There may also be **multiple** mitochondria present within a
+single neuron. Thus, they are represented as a tree-like stucture, with a
+series of points (which differ in radii), organized into sections. The position
+of the points are represented as a function of the :term:`section` of the
+neuron they lie in. In case of branching mitochondria, multiple sections would
+be required to represent them while a single section would be sufficient to
+represent a mitochondria that does not branch.
 
-Dendritic spine: Sections start at the root, a branching point or anywhere
-along a branch (ie: unifurcations are allowed).
+Dendritic spine: Sections start at the root, a branching point or anywhere along a branch
+(ie: unifurcations are allowed).
 Two sections can share a single branch if they have a different section type.
-A spine base is defined as the first point of the root section. The spine base
-begins at the dendritic shaft and not the center of the dendrite.
-Unifurcations are allowed so that for a long morphological process that does
-not branch different sections can still be annotated as head and neck.
+A spine base is defined as the first point of the root section. The spine base begins at the dendritic shaft
+and not the center of the dendrite.
+Unifurcations are allowed so that for a long morphological process that does not branch different sections can still
+be annotated as head and neck.
 PSD: :term:`postsynaptic density` are identified on points.
 
 Multiple spines: a set of multiple spines can be represented as a single
@@ -328,8 +319,8 @@ diagram):
    |  19  |   0   |   15  |   0   |   2   |              |
    +------+-------+-------+-------+-------+--------------+
 
-`structure` Dataset, where `SO` is `Segment Offset`, `PID` is `Parent ID` and
-`TYP` is `Type` (note the implicit `i` index):
+`structure` Dataset, where `SO` is `Segment Offset`, `PID` is `Parent ID` and `TYP`
+is `Type` (note the implicit `i` index):
 
    === === === === ==========
     i   SO TYP PID Colour
@@ -409,8 +400,8 @@ diagram):
    +------+-------+-------+-------+-------+--------------+
 
 
-`structure` Dataset, where `SO` is `Segment Offset`, `PID` is `Parent ID` and
-`TYP` is `Type` (note the implicit `i` index):
+`structure` Dataset, where `SO` is `Segment Offset`, `PID` is `Parent ID` and `TYP`
+is `Type` (note the implicit `i` index):
 
    === === === === ==========
     i   SO TYP PID Colour
