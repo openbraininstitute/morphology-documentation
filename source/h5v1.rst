@@ -82,6 +82,8 @@ The datasets in the root `/` are:
 
        For dendritic spine the values are: 2: `neck`, 3: `head`.
 
+       For multiple spines the value is: 2: `spine`.
+
        Note: If there is a soma, it should be given as the first section (the soma must contain only one section).
 
      - `parent index`: The implicit index into the `structure` of the parent.
