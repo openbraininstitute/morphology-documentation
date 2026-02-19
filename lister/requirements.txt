@@ -1,0 +1,2 @@
+entitysdk[staging] @ git+https://github.com/openbraininstitute/entitysdk.git@ce7274c29c60747b811f2ff1e49f00927c4a5425
+obi_auth
