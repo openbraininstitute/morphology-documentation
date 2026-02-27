@@ -13,8 +13,8 @@ from obi_auth import get_token
 L = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
-virtual_lab_id = "84258ff5-114f-4865-9a2d-258575c23909"
-project_id = "c013bf9e-74e6-4486-bf06-5d414fc473c6"
+#virtual_lab_id = "84258ff5-114f-4865-9a2d-258575c23909"
+#project_id = "c013bf9e-74e6-4486-bf06-5d414fc473c6"
 
 def main():
     """Script to launch a task for a single configuration asset.
@@ -49,6 +49,8 @@ def main():
 
         parser.add_argument("--entity_type", required=True, help="EntitySDK entity type as string")
         parser.add_argument("--entity_id", required=True, help="Entity ID as string")
+        parser.add_argument("--virtual_lab_id", required=True, help="Vlab id")
+        parser.add_argument("--project_id", required=True, help="Vlab id")
 
         args = parser.parse_args()
 
