@@ -67,7 +67,9 @@ def main():
         ),
     )
     project_context = ProjectContext(
-        project_id=project_id, virtual_lab_id=virtual_lab_id, environment=deployment
+        project_id=args.project_id,
+        virtual_lab_id=args.virtual_lab_id,
+        environment=deployment,
     )
     client = Client(
         environment=deployment,
