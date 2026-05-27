@@ -82,7 +82,7 @@ The datasets in the root `/` are:
 
        For dendritic spine the values are: 2: `neck`, 3: `head`.
 
-       For multiple spines the value is: 2: `spine`.
+       For multiple spines the values are: 1: `spine` (generic), 2: `neck`, 3: `head`.
 
        Note: If there is a soma, it should be given as the first section (the soma must contain only one section).
 
@@ -450,7 +450,19 @@ is `Type` (note the implicit `i` index):
 Multiple spines example
 -----------------------
 
-For the example, we will be using a set of two spines, with three and two points respectively.
+For the example, we will be using a set of two spines that illustrate the
+different use cases supported by the format:
+
+- **Spine A** (simple): A spine with a neck section (Green) followed by a head
+  section (Red). This represents the most common case of a non-branching spine.
+
+- **Spine B** (bifurcated): A spine whose neck (Blue) bifurcates into two head
+  sections (Orange and Purple). This represents a more complex spine where the
+  head region branches.
+
+Note that the points belonging to different spines do not need to be connected
+(their coordinates are independent). Shared points at bifurcation boundaries
+are duplicated, as in the neuron morphology structure.
 
 .. image:: _static/ExMultipleSpines.svg
     :alt: Example Multiple Spines
@@ -461,17 +473,30 @@ diagram):
    +------+-------+-------+-------+-------+--------------+
    |   i  |   X   |   Y   |   Z   |   D   |              |
    +======+=======+=======+=======+=======+==============+
-   |   0  |   2.  |   2.  |   2.  |  0.1  |              |
-   +------+-------+-------+-------+-------+              |
-   |   1  |   3.  |   3.  |  2.4  |  0.2  |   Green      |
-   +------+-------+-------+-------+-------+              |
-   |   2  |   3.  |   4.  |   3.  |  0.3  |              |
+   |   0  |   1.  |   1.  |   0.  |  0.1  |              |
+   +------+-------+-------+-------+-------+  Green       |
+   |   1  |   2.  |   2.  |   0.  |  0.15 |  (Spine A    |
+   +------+-------+-------+-------+-------+   neck)      |
+   |   2  |   3.  |   3.  |   0.  |  0.2  |              |
    +------+-------+-------+-------+-------+--------------+
-   |   3  |   5.  |   5.  |   5.  |  0.2  |              |
-   +------+-------+-------+-------+-------+   Blue       |
-   |   4  |   5.  |   6.  |   5.  |  0.5  |              |
+   |   3  |   3.  |   3.  |   0.  |  0.3  |  Red         |
+   +------+-------+-------+-------+-------+  (Spine A    |
+   |   4  |   3.  |   4.  |   0.  |  0.8  |   head)      |
    +------+-------+-------+-------+-------+--------------+
-
+   |   5  |   5.  |   5.  |   0.  |  0.1  |              |
+   +------+-------+-------+-------+-------+  Blue        |
+   |   6  |   5.  |   6.  |   0.  |  0.15 |  (Spine B    |
+   +------+-------+-------+-------+-------+   neck)      |
+   |   7  |   5.  |   7.  |   0.  |  0.2  |              |
+   +------+-------+-------+-------+-------+--------------+
+   |   8  |   5.  |   7.  |   0.  |  0.3  |  Orange      |
+   +------+-------+-------+-------+-------+  (Spine B    |
+   |   9  |   4.  |   8.  |   0.  |  0.7  |   head 1)    |
+   +------+-------+-------+-------+-------+--------------+
+   |  10  |   5.  |   7.  |   0.  |  0.3  |  Purple      |
+   +------+-------+-------+-------+-------+  (Spine B    |
+   |  11  |   6.  |   8.  |   0.  |  0.7  |   head 2)    |
+   +------+-------+-------+-------+-------+--------------+
 
 
 `structure` Dataset, where `SO` is `Segment Offset`, `PID` is `Parent ID` and
@@ -480,9 +505,28 @@ diagram):
    === === === === ==========
     i   SO TYP PID Colour
    === === === === ==========
-    0   2   2  -1  Green
-    1   5   2  -1  Blue
+    0   0   2  -1  Green
+    1   3   3   0  Red
+    2   5   2  -1  Blue
+    3   8   3   2  Orange
+    4  10   3   2  Purple
    === === === === ==========
+
+In this example:
+
+- Each section with ``PID = -1`` marks the root of a new spine. This is how
+  individual spines are distinguished within the file: every root section
+  starts a separate spine tree.
+
+- Sections 0 and 1 belong to **Spine A**. Section 0 is the neck (type 2) and
+  section 1 is the head (type 3). The shared point at the neck/head boundary
+  (3., 3.) is duplicated as points i=2 and i=3.
+
+- Sections 2, 3, and 4 belong to **Spine B**. Section 2 is the neck (type 2).
+  Sections 3 and 4 are both heads (type 3) that branch from section 2
+  (``PID = 2``), forming a bifurcation. The shared point at the bifurcation
+  (5., 7.) is duplicated as points i=7, i=8, and i=10 (the last point of the
+  neck and the first point of each head).
 
 
 
