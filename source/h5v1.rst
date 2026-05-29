@@ -259,11 +259,11 @@ be annotated as head and neck.
 PSD: :term:`postsynaptic density` are identified on points.
 
 Multiple spines: a set of multiple spines can be represented as a single
-morphology, following the same specification. The only difference is that only
-the spines are represented. In this case, there is no soma nor neurites. The
-spines' coordinates (`points` structure) can be local (centered at (0,0,0)) or
-global (with respect to its corresponding morphology). Therefore, the points
-belonging to different spines do not need to be connected.
+morphology, following the same specification. The key difference with the
+single morphology is that only the spines are represented. In this case, there
+is no soma nor neurites. The spines' coordinates (`points` structure) can be
+local (centered at (0,0,0)) or global (with respect to its corresponding
+morphology points). Therefore, each spine is an independent tree structure.
 
 Example
 -------
@@ -518,15 +518,15 @@ In this example:
   individual spines are distinguished within the file: every root section
   starts a separate spine tree.
 
-- Sections 0 and 1 belong to **Spine A**. Section 0 is the neck (type 2) and
-  section 1 is the head (type 3). The shared point at the neck/head boundary
-  (3., 3.) is duplicated as points i=2 and i=3.
+- Sections 0 and 1 belong to **Spine A**. Section 0 (green) is the neck (type
+  2) and section 1 (red) is the head (type 3). The shared point at the
+  neck/head boundary (3., 3.) is duplicated as points `i=2` and `i=3`.
 
-- Sections 2, 3, and 4 belong to **Spine B**. Section 2 is the neck (type 2).
-  Sections 3 and 4 are both heads (type 3) that branch from section 2
-  (``PID = 2``), forming a bifurcation. The shared point at the bifurcation
-  (5., 7.) is duplicated as points i=7, i=8, and i=10 (the last point of the
-  neck and the first point of each head).
+- Sections 2, 3, and 4 belong to **Spine B**. Section 2 (blue) is the neck
+  (type 2). Sections 3 (orange) and 4 (purple) are both heads (type 3) that
+  branch from section 2 (`PID = 2`), forming a bifurcation. The shared point at
+  the bifurcation (5., 7.) is duplicated as points `i=7`, `i=8`, and `i=10`
+  (the last point of the neck and the first point of each head).
 
 
 
