@@ -514,7 +514,7 @@ diagram):
 
 In this example:
 
-- Each section with ``PID = -1`` marks the root of a new spine. This is how
+- Each section with `PID = -1` marks the root of a new spine. This is how
   individual spines are distinguished within the file: every root section
   starts a separate spine tree.
 
