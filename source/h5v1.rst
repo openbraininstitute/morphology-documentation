@@ -258,12 +258,12 @@ Unifurcations are allowed so that for a long morphological process that does not
 be annotated as head and neck.
 PSD: :term:`postsynaptic density` are identified on points.
 
-Multiple spines: a set of multiple spines can be represented as a single
-morphology, following the same specification. The key difference with the
-single morphology is that only the spines are represented. In this case, there
-is no soma nor neurites. The spines' coordinates (`points` structure) can be
-local (centered at (0,0,0)) or global (with respect to its corresponding
-morphology points). Therefore, each spine is an independent tree structure.
+Multiple spines: Here multiple spines are represented within one logical
+morphology for efficiency reasons: only a single `points` and `structure`
+dataset is required. Since it is a spine, no soma or neurites are included.
+The spine starts are denoted by their parent ID being -1. The spines'
+coordinates (`points` structure) can be local (centered at (0,0,0)) or global
+(with respect to its corresponding morphology).
 
 Example
 -------
@@ -513,10 +513,6 @@ diagram):
    === === === === ==========
 
 In this example:
-
-- Each section with `PID = -1` marks the root of a new spine. This is how
-  individual spines are distinguished within the file: every root section
-  starts a separate spine tree.
 
 - Sections 0 and 1 belong to **Spine A**. Section 0 (green) is the neck (type
   2) and section 1 (red) is the head (type 3). The shared point at the
