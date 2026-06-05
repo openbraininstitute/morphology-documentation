@@ -1,8 +1,10 @@
-HDF5 Version 1.3 Morphology Description
+HDF5 Version 1.4 Morphology Description
 =======================================
 
 Changelog
 ---------
+- 1.4 Added specification for Multiple Spines.
+
 - 1.3 Added specification for Dendritic Spine.
 
 - 1.2 Added specification for Mitochondria and Endoplasmic Reticulum morphology.
@@ -79,6 +81,8 @@ The datasets in the root `/` are:
        For glia cells the values are: 1: `soma`, 2: `glia perivascular process`, 3 `glia process`.
 
        For dendritic spine the values are: 2: `neck`, 3: `head`.
+
+       For multiple spines the values are: 1: `spine` (generic), 2: `neck`, 3: `head`.
 
        Note: If there is a soma, it should be given as the first section (the soma must contain only one section).
 
@@ -170,13 +174,14 @@ The datasets in the organelles/postsynaptic_density group are:
 
 The attributes in the `/metadata` group are:
 
-  - `cell_family_enum`: An H5 enum that can take the values NEURON, GLIA or SPINE.
-     Inside each family there can be multiple types, this classification is out
-     of the scope of this file.
+  - `cell_family_enum`: An H5 enum that can take the values NEURON, GLIA, SPINE
+     or MULTIPLE_SPINES. Inside each family there can be multiple types, this
+     classification is out of the scope of this file.
 
   - `cell_family`: An H5 attribute of type `cell_family_enum`: States the
      family that the morphology belongs to. Prior version 1.1, the cell family
      is assumed to be NEURON. As of version 1.3, the cell family can be `SPINE`.
+     As of version 1.4, the cell family can be `MULTIPLE_SPINES`.
 
   - `creator`: The software used to create the morphology.
 
@@ -252,6 +257,13 @@ and not the center of the dendrite.
 Unifurcations are allowed so that for a long morphological process that does not branch different sections can still
 be annotated as head and neck.
 PSD: :term:`postsynaptic density` are identified on points.
+
+Multiple spines: Here multiple spines are represented within one logical
+morphology for efficiency reasons: only a single `points` and `structure`
+dataset is required. Since it is a spine, no soma or neurites are included.
+The spine starts are denoted by their parent ID being -1. The spines'
+coordinates (`points` structure) can be local (centered at (0,0,0)) or global
+(with respect to its corresponding morphology).
 
 Example
 -------
@@ -433,6 +445,86 @@ is `Type` (note the implicit `i` index):
    +------+-----------+
    |  1   |   .9      |
    +------+-----------+
+
+
+Multiple spines example
+-----------------------
+
+For the example, we will be using a set of two spines that illustrate the
+different use cases supported by the format:
+
+- **Spine A** (simple): A spine with a neck section (Green) followed by a head
+  section (Red). This represents the most common case of a non-branching spine.
+
+- **Spine B** (bifurcated): A spine whose neck (Blue) bifurcates into two head
+  sections (Orange and Purple). This represents a more complex spine where the
+  head region branches.
+
+Note that the points belonging to different spines do not need to be connected
+(their coordinates are independent). Shared points at bifurcation boundaries
+are duplicated, as in the neuron morphology structure.
+
+.. image:: _static/ExMultipleSpines.svg
+    :alt: Example Multiple Spines
+
+`points` structure (note the implicit `i` index, the colours refer to the above
+diagram):
+
+   +------+-------+-------+-------+-------+---------------------------+
+   |   i  |   X   |   Y   |   Z   |   D   |                           |
+   +======+=======+=======+=======+=======+===========================+
+   |   0  |   1.  |   1.  |   0.  |  0.1  |                           |
+   +------+-------+-------+-------+-------+                           |
+   |   1  |   2.  |   2.  |   0.  |  0.15 |  Green (Spine A neck)     |
+   +------+-------+-------+-------+-------+                           |
+   |   2  |   3.  |   3.  |   0.  |  0.2  |                           |
+   +------+-------+-------+-------+-------+---------------------------+
+   |   3  |   3.  |   3.  |   0.  |  0.3  |                           |
+   +------+-------+-------+-------+-------+  Red (Spine A head)       |
+   |   4  |   3.  |   4.  |   0.  |  0.8  |                           |
+   +------+-------+-------+-------+-------+---------------------------+
+   |   5  |   5.  |   5.  |   0.  |  0.1  |                           |
+   +------+-------+-------+-------+-------+                           |
+   |   6  |   5.  |   6.  |   0.  |  0.15 |  Blue (Spine B neck)      |
+   +------+-------+-------+-------+-------+                           |
+   |   7  |   5.  |   7.  |   0.  |  0.2  |                           |
+   +------+-------+-------+-------+-------+---------------------------+
+   |   8  |   5.  |   7.  |   0.  |  0.3  |                           |
+   +------+-------+-------+-------+-------+  Orange (Spine B head 1)  |
+   |   9  |   4.  |   8.  |   0.  |  0.7  |                           |
+   +------+-------+-------+-------+-------+---------------------------+
+   |  10  |   5.  |   7.  |   0.  |  0.3  |                           |
+   +------+-------+-------+-------+-------+  Purple (Spine B head 2)  |
+   |  11  |   6.  |   8.  |   0.  |  0.7  |                           |
+   +------+-------+-------+-------+-------+---------------------------+
+
+
+`structure` Dataset, where `SO` is `Segment Offset`, `PID` is `Parent ID` and
+`TYP` is `Type` (note the implicit `i` index):
+
+   === === === === ==========
+    i   SO TYP PID Colour
+   === === === === ==========
+    0   0   2  -1  Green
+    1   3   3   0  Red
+    2   5   2  -1  Blue
+    3   8   3   2  Orange
+    4  10   3   2  Purple
+   === === === === ==========
+
+In this example:
+
+- Sections 0 and 1 belong to **Spine A**. Section 0 (green) is the neck (type
+  2) and section 1 (red) is the head (type 3). The shared point at the
+  neck/head boundary (3., 3.) is duplicated as points `i=2` and `i=3`.
+
+- Sections 2, 3, and 4 belong to **Spine B**. Section 2 (blue) is the neck
+  (type 2). Sections 3 (orange) and 4 (purple) are both heads (type 3) that
+  branch from section 2 (`PID = 2`), forming a bifurcation. The shared point at
+  the bifurcation (5., 7.) is duplicated as points `i=7`, `i=8`, and `i=10`
+  (the last point of the neck and the first point of each head).
+
+
 
 
 Consumers
