@@ -138,4 +138,4 @@ It means that every change must go with their corresponding Python unit-tests to
 validate the library behavior as well as to demonstrate the API usage. 
 
 
-[github]: https://github.com/BlueBrain/morphology-documentation
+[github]: https://github.com/openbraininstitute/morphology-documentation
