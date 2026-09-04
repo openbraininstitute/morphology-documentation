@@ -1,19 +1,32 @@
-.. morphology documentation master file, created by
-   sphinx-quickstart on Mon Jun 29 10:27:08 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Morphology file formats documentation
+=====================================
 
-Morphology files formats documentation
-======================================
+This documentation describes the HDF5-based file formats used to represent
+neuron, glia, spine, and vasculature morphologies.
+
+Start here
+----------
+
+The current and recommended morphology format is documented in
+:doc:`HDF5 Version 1.4 Morphology Description <h5v1>`. Start with that page
+for the format structure, datasets, and attributes.
+
+The :doc:`HDF5 Version 2 Morphology Description <h5v2>` is retained for
+reference but is deprecated. The documentation also covers vasculature
+morphologies, merged HDF5 containers, and terminology used throughout the
+specifications.
+
+Documentation
+-------------
+
+:doc:`Browse all morphology file formats and related reference material
+<formats>`.
 
 .. toctree::
-   :maxdepth: 2
    :hidden:
+   :maxdepth: 1
 
    Home <self>
-   h5v1
-   h5v2
-   h5-vasc-graph
-   h5-containers
-   glossary
+   HDF5 Version 1.4 Morphology Description <h5v1>
+   Additional documentation <formats>
 
